@@ -258,5 +258,3 @@ if __name__ == '__main__':
 
     application.add_handler(conv_handler)
     application.add_handler(CallbackQueryHandler(update_status, pattern="^status_(done|cancel)_\\d+$"))
-    if __name__ == "__main__":
-    asyncio.run(application.run_polling())
