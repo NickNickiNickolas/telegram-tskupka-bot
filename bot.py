@@ -231,6 +231,8 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 if __name__ == '__main__':
+    import asyncio
+    asyncio.run(application.run_polling())    
     application = ApplicationBuilder().token("8079851046:AAGnyFflGYanv1kMGylzYbgyqlOokSlAYSs").build()
 
     conv_handler = ConversationHandler(
