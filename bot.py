@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 AGE_CONFIRM, CATEGORY, CONDITION, CITY, PHONE, PHOTO, SAVE = range(7)
 
 # Админ ID
-ADMIN_CHAT_ID = 7902485807  # Замените на ваш ID
+ADMIN_CHAT_ID = 7902485807  # Замените на ваш ID или -100XXXXXXXXXX для канала
 
 # Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -48,7 +48,7 @@ condition_buttons = [
     [InlineKeyboardButton("Повреждено", callback_data="Повреждено")],
 ]
 
-# Старт
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("Мне есть 18 лет", callback_data="yes")],
@@ -63,7 +63,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return AGE_CONFIRM
 
 
-# Подтверждение возраста
 async def age_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -150,8 +149,9 @@ async def skip_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def save_data(message_source, context: ContextTypes.DEFAULT_TYPE):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     photo_id = context.user_data.get("photo")
-    photo_info = "https://t.me/c/{}/{}".format(ADMIN_CHAT_ID, message_source.message_id) if photo_id else "Не предоставлено"
+    photo_info = "Прикреплено" if photo_id else "Не предоставлено"
 
+    # Сохраняем в таблицу
     row_data = [
         now,
         context.user_data.get("device"),
@@ -182,18 +182,9 @@ async def save_data(message_source, context: ContextTypes.DEFAULT_TYPE):
     ])
 
     if photo_id:
-        await context.bot.send_photo(
-            chat_id=ADMIN_CHAT_ID,
-            photo=photo_id,
-            caption=text,
-            reply_markup=status_buttons,
-        )
+        await context.bot.send_photo(chat_id=ADMIN_CHAT_ID, photo=photo_id, caption=text, reply_markup=status_buttons)
     else:
-        await context.bot.send_message(
-            chat_id=ADMIN_CHAT_ID,
-            text=text,
-            reply_markup=status_buttons,
-        )
+        await context.bot.send_message(chat_id=ADMIN_CHAT_ID, text=text, reply_markup=status_buttons)
 
     await message_source.reply_text(
         "🎉 Спасибо! Ваша заявка отправлена.",
@@ -231,7 +222,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if __name__ == '__main__':
     import asyncio
-    asyncio.run(application.run_polling())    
+
     application = ApplicationBuilder().token("8079851046:AAGnyFflGYanv1kMGylzYbgyqlOokSlAYSs").build()
 
     conv_handler = ConversationHandler(
@@ -258,3 +249,5 @@ if __name__ == '__main__':
 
     application.add_handler(conv_handler)
     application.add_handler(CallbackQueryHandler(update_status, pattern="^status_(done|cancel)_\\d+$"))
+
+    asyncio.run(application.run_polling())
