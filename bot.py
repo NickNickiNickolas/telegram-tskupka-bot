@@ -54,15 +54,23 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("Мне есть 18 лет", callback_data="yes")],
         [InlineKeyboardButton("Нет 18 лет", callback_data="no")],
     ])
-    
+
     photo_path = "PhotoHello.jpeg"
-    
     if update.message:
-        await update.message.reply_text("Подтвердите, что вам есть 18:", reply_markup=keyboard)
+        await update.message.reply_photo(
+            photo=open(photo_path, "rb"),
+            caption="Подтвердите, что вам есть 18:",
+            reply_markup=keyboard
+        )
     elif update.callback_query:
-        await update.callback_query.message.reply_text("Подтвердите, что вам есть 18:", reply_markup=keyboard)
+        await update.callback_query.message.reply_photo(
+            photo=open(photo_path, "rb"),
+            caption="Подтвердите, что вам есть 18:",
+            reply_markup=keyboard
+        )
 
     return AGE_CONFIRM
+
 
 
 async def age_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE):
