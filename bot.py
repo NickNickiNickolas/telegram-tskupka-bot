@@ -55,19 +55,20 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("Нет 18 лет", callback_data="no")],
     ])
 
-    photo_path = "PhotoHello.jpeg"
     if update.message:
-        await update.message.reply_photo(
-            photo=open(photo_path, "rb"),
-            caption="Подтвердите, что вам есть 18:",
-            reply_markup=keyboard
-        )
+        with open("PhotoHello.jpeg", "rb") as photo:
+            await update.message.reply_photo(
+                photo=photo,
+                caption="T-Скупка приветствует Вас!\n\nВыберите категорию техники, которую хотите сдать:",
+            )
+        await update.message.reply_text("Подтвердите, что вам есть 18:", reply_markup=keyboard)
     elif update.callback_query:
-        await update.callback_query.message.reply_photo(
-            photo=open(photo_path, "rb"),
-            caption="Подтвердите, что вам есть 18:",
-            reply_markup=keyboard
-        )
+        with open("PhotoHello.jpeg", "rb") as photo:
+            await update.callback_query.message.reply_photo(
+                photo=photo,
+                caption="Добро пожаловать в сервис T-Скупка!\n\nВыберите категорию техники, которую хотите сдать:",
+            )
+        await update.callback_query.message.reply_text("Подтвердите, что вам есть 18:", reply_markup=keyboard)
 
     return AGE_CONFIRM
 
